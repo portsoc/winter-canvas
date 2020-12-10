@@ -1,0 +1,15 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: linear-gradient( #9198e5, #990088);
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+}
