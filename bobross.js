@@ -1,9 +1,16 @@
 import rnd from './mulberry32.js';
 
 const FLAKE_COUNT = 1000;
-const MAX_FLAKE_SIZE = 5;
+const MAX_FLAKE_SIZE = 10;
+const MAX_SY = 1;
+const MIN_SY = 0.2;
+const MAX_SX = 0.5;
+
+const flakes = [];
 
 let c;
+let logo;
+let canvasH;
 let groundY;
 
 function drawCabin(x,y) {
@@ -89,17 +96,26 @@ function drawLandscape() {
   drawTree(700, groundY, 300);
 }
 
-function drawLogo() {
-  const logo = new Image();
-  logo.src = 'uop-linear.png';
+function prepareLogo() {
+  const localLogo = new Image();
+  localLogo.src = 'uop-linear.png';
 
-  logo.addEventListener('load', () => {
+  localLogo.addEventListener('load', () => {
+    logo = localLogo;
     const scale = 200 / logo.width;
-    c.drawImage(logo, 50, 50, logo.width * scale, logo.height * scale);
+    logo.scaledW = scale * logo.width;
+    logo.scaledH = scale * logo.height;
   });
 }
 
-function drawFlake(x, y, size) {
+function drawLogo() {
+  if (logo) {
+    c.drawImage(logo, 50, 50, logo.scaledW, logo.scaledH);
+  }
+}
+
+function drawFlake(flake) {
+  const {x, y, size} = flake;
   c.fillStyle = "#fffb";
   c.beginPath();
   c.ellipse(x, y, size/2, size/2, 0, 0, 7);
@@ -107,12 +123,55 @@ function drawFlake(x, y, size) {
 }
 
 function drawSnow() {
-  for (let i=0; i<FLAKE_COUNT; i+=1) {
-    const x = rnd() * 800;
-    const y = rnd() * groundY;
-    const size = rnd() * MAX_FLAKE_SIZE + 1;
-    drawFlake(x, y, size);
+  for (const flake of flakes) {
+    drawFlake(flake);
   }
+}
+
+function createNewFlake(yRange = 0) {
+  const x = rnd() * 800;
+  const y = rnd() * yRange;
+  const size = rnd() * MAX_FLAKE_SIZE + 1;
+  const sy = rnd() * (MAX_SY - MIN_SY) + MIN_SY;
+  const sx = (rnd() * 2 - 1) * MAX_SX;
+  return {x, y, size, sy, sx};
+}
+
+function initSnow() {
+  for (let i=0; i<FLAKE_COUNT; i+=1) {
+    const flake = createNewFlake(-canvasH);
+    flakes.push(flake);
+  }
+}
+
+function moveFlake(flake) {
+  flake.y += flake.sy;
+  flake.x += flake.sx;
+  flake.x = (flake.x + 800) % 800;
+}
+
+function isOutOfBounds(flake) {
+  return flake.y > canvasH;
+}
+
+function moveSnow() {
+  for (let i = 0; i < flakes.length; i+=1) {
+    const flake = flakes[i];
+    moveFlake(flake);
+    if (isOutOfBounds(flake)) {
+      flakes[i] = createNewFlake();
+    }
+  }
+}
+
+function animate() {
+  c.clearRect(0, 0, 800, canvasH);
+  drawLandscape();
+  drawLogo();
+  drawSnow();
+
+  moveSnow();
+  window.requestAnimationFrame(animate);
 }
 
 function init() {
@@ -125,11 +184,13 @@ function init() {
   const scale = window.innerWidth / 800;
   c.scale(scale, scale);
 
-  groundY = window.innerHeight * 0.9 / scale;
+  canvasH = window.innerHeight / scale;
+  groundY = canvasH * 0.9;
 
-  drawLandscape();
-  drawLogo();
-  drawSnow();
+  initSnow();
+  prepareLogo();
+
+  animate();
 }
 
 
