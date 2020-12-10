@@ -1,7 +1,8 @@
 import rnd from './mulberry32.js';
 
 const FLAKE_COUNT = 1000;
-const MAX_FLAKE_SIZE = 5;
+const MAX_SETTLED = 10000;
+const MAX_FLAKE_SIZE = 3;
 const MAX_SY = 1.5;
 const MIN_SY = 0.5;
 const MAX_SX = 0.5;
@@ -14,6 +15,7 @@ let logo;
 let canvasH;
 let groundY;
 let scale;
+let settledCount = 0;
 
 function drawCabin(x,y) {
 
@@ -149,6 +151,8 @@ function isTransparent(x, y) {
 }
 
 function moveFlake(flake) {
+  if (flake.sy <= 0) return false; // the flake has settled
+
   const nextY = flake.y + flake.sy;
   const nextX = (flake.x + flake.sx + 800) % 800;
   if (isTransparent(nextX, nextY)) {
@@ -156,12 +160,14 @@ function moveFlake(flake) {
     flake.y = nextY;
     return true;
   } else {
-    return false;
+    flake.sx *= (flake.sy-1) / flake.sy;
+    flake.sy -= 1;
+    return moveFlake(flake);
   }
 }
 
 function isOutOfBounds(flake) {
-  return flake.y > canvasH;
+  return flake.y > groundY;
 }
 
 function moveSnow() {
@@ -172,7 +178,10 @@ function moveSnow() {
       flakes[i] = createNewFlake();
     } else if (!moved) {
       // the flake has settled
-      settledFlakes.push(flake);
+      if (settledCount < MAX_SETTLED) {
+        settledFlakes.push(flake);
+        settledCount += 1;
+      }
       // replace it with a fresh flake
       flakes[i] = createNewFlake();
     }
