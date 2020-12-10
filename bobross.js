@@ -12,6 +12,7 @@ const settledFlakes = [];
 
 let c;
 let logo;
+let bauble;
 let canvasH;
 let groundY;
 let scale;
@@ -113,6 +114,39 @@ function prepareLogo() {
     c.drawImage(logo, 50, 50, logo.scaledW, logo.scaledH);
     saveCanvasPicture();
   });
+}
+
+function prepareBauble() {
+  const localBauble = new Image();
+  localBauble.src = 'bauble.png';
+
+  localBauble.addEventListener('load', () => {
+    bauble = localBauble;
+    const scale = 20 / bauble.width;
+    bauble.scaledW = scale * bauble.width;
+    bauble.scaledH = scale * bauble.height;
+  });
+}
+
+function getClickCoordinates(event, element) {
+  const rect = element.getBoundingClientRect();
+
+  return {
+    left: event.clientX - rect.left,
+    top: event.clientY - rect.top,
+  };
+}
+
+function drawBauble(e) {
+  if (bauble == null) return;
+
+  const coords = getClickCoordinates(e, c.canvas);
+  const x = coords.left/scale - bauble.scaledW/2;
+  const y = coords.top/scale - bauble.scaledH/2;
+
+  restoreCanvasPicture();
+  c.drawImage(bauble, x, y, bauble.scaledW, bauble.scaledH);
+  saveCanvasPicture();
 }
 
 function drawFlake(flake) {
@@ -237,6 +271,9 @@ function init() {
   saveCanvasPicture();
 
   animate();
+
+  prepareBauble();
+  canvas.addEventListener('click', drawBauble);
 }
 
 
