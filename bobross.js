@@ -1,17 +1,19 @@
 import rnd from './mulberry32.js';
 
 const FLAKE_COUNT = 1000;
-const MAX_FLAKE_SIZE = 10;
-const MAX_SY = 1;
-const MIN_SY = 0.2;
+const MAX_FLAKE_SIZE = 5;
+const MAX_SY = 1.5;
+const MIN_SY = 0.5;
 const MAX_SX = 0.5;
 
 const flakes = [];
+const settledFlakes = [];
 
 let c;
 let logo;
 let canvasH;
 let groundY;
+let scale;
 
 function drawCabin(x,y) {
 
@@ -105,13 +107,10 @@ function prepareLogo() {
     const scale = 200 / logo.width;
     logo.scaledW = scale * logo.width;
     logo.scaledH = scale * logo.height;
-  });
-}
-
-function drawLogo() {
-  if (logo) {
+    restoreCanvasPicture();
     c.drawImage(logo, 50, 50, logo.scaledW, logo.scaledH);
-  }
+    saveCanvasPicture();
+  });
 }
 
 function drawFlake(flake) {
@@ -144,10 +143,21 @@ function initSnow() {
   }
 }
 
+function isTransparent(x, y) {
+  const pixelData = c.getImageData(x*scale, y*scale, 1, 1).data;
+  return pixelData[3] < 250;
+}
+
 function moveFlake(flake) {
-  flake.y += flake.sy;
-  flake.x += flake.sx;
-  flake.x = (flake.x + 800) % 800;
+  const nextY = flake.y + flake.sy;
+  const nextX = (flake.x + flake.sx + 800) % 800;
+  if (isTransparent(nextX, nextY)) {
+    flake.x = nextX;
+    flake.y = nextY;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function isOutOfBounds(flake) {
@@ -157,21 +167,45 @@ function isOutOfBounds(flake) {
 function moveSnow() {
   for (let i = 0; i < flakes.length; i+=1) {
     const flake = flakes[i];
-    moveFlake(flake);
+    const moved = moveFlake(flake);
     if (isOutOfBounds(flake)) {
+      flakes[i] = createNewFlake();
+    } else if (!moved) {
+      // the flake has settled
+      settledFlakes.push(flake);
+      // replace it with a fresh flake
       flakes[i] = createNewFlake();
     }
   }
 }
 
+function drawSettledSnow() {
+  for (const flake of settledFlakes) {
+    drawFlake(flake);
+  }
+  settledFlakes.length = 0;
+}
+
 function animate() {
-  c.clearRect(0, 0, 800, canvasH);
-  drawLandscape();
-  drawLogo();
+  restoreCanvasPicture();
+  moveSnow();
+  drawSettledSnow();
+  saveCanvasPicture();
+
   drawSnow();
 
-  moveSnow();
   window.requestAnimationFrame(animate);
+}
+
+let savedPicture;
+
+function saveCanvasPicture() {
+  savedPicture = c.getImageData(0, 0, c.canvas.width, c.canvas.height);
+}
+
+function restoreCanvasPicture() {
+  c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+  c.putImageData(savedPicture, 0, 0);
 }
 
 function init() {
@@ -181,7 +215,7 @@ function init() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const scale = window.innerWidth / 800;
+  scale = window.innerWidth / 800;
   c.scale(scale, scale);
 
   canvasH = window.innerHeight / scale;
@@ -189,6 +223,9 @@ function init() {
 
   initSnow();
   prepareLogo();
+
+  drawLandscape();
+  saveCanvasPicture();
 
   animate();
 }
