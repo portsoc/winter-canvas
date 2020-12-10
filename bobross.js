@@ -1,3 +1,8 @@
+import rnd from './mulberry32.js';
+
+const FLAKE_COUNT = 1000;
+const MAX_FLAKE_SIZE = 5;
+
 let c;
 let groundY;
 
@@ -94,6 +99,22 @@ function drawLogo() {
   });
 }
 
+function drawFlake(x, y, size) {
+  c.fillStyle = "#fffb";
+  c.beginPath();
+  c.ellipse(x, y, size/2, size/2, 0, 0, 7);
+  c.fill();
+}
+
+function drawSnow() {
+  for (let i=0; i<FLAKE_COUNT; i+=1) {
+    const x = rnd() * 800;
+    const y = rnd() * groundY;
+    const size = rnd() * MAX_FLAKE_SIZE + 1;
+    drawFlake(x, y, size);
+  }
+}
+
 function init() {
   const canvas = document.querySelector('canvas');
   c = canvas.getContext('2d');
@@ -108,6 +129,7 @@ function init() {
 
   drawLandscape();
   drawLogo();
+  drawSnow();
 }
 
 
