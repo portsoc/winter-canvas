@@ -48,9 +48,9 @@ c.fillRect(100,600,600,200);
 canvas.snowing = true;
 ```
 
-This minimal example can be seen running here.
+This minimal example can be seen running [here](https://portsoc.github.io/winter-canvas/example/minimal.html).
 
-**Warning:** anything drawn after snowing has started will be ignored.
+**Note:** anything drawn after snowing has started will be ignored.
 
 
 ### Attributes
