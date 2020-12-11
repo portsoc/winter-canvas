@@ -1,0 +1,43 @@
+{
+  "name": "winter-canvas",
+  "version": "0.0.1",
+  "description": "Bob Ross Winter Canvas with a Happy Little Cabin",
+  "main": "index.html",
+  "scripts": {
+    "test": "npm run lint",
+    "lint": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/portsoc/winter-canvas.git"
+  },
+  "author": "PortSoc <SoftEng@port.ac.uk>",
+  "contributors": [
+    "Rich Boakes <rjb@port.ac.uk>",
+    "Jacek Kopecky <jacek.kopecky@port.ac.uk>",
+    "Matt Dennis <matthew.dennis@port.ac.uk>"
+  ],
+  "keywords": [
+    "bob",
+    "ross",
+    "canvas",
+    "snow"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/portsoc/winter-canvas/issues"
+  },
+  "homepage": "https://github.com/portsoc/winter-canvas#readme",
+  "devDependencies": {
+    "eslint": "^7.15.0",
+    "eslint-config-portsoc": "^0.8.1"
+  },
+  "eslintConfig": {
+    "extends": "portsoc",
+    "root": true,
+    "env": {
+      "browser": true
+    }
+  }
+
+}
