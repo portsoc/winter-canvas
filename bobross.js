@@ -17,75 +17,74 @@ let groundY;
 let scale;
 let settledCount = 0;
 
-function drawCabin(x,y) {
-
+function drawCabin(x, y) {
   c.strokeStyle = 'white';
   c.lineWidth = 4;
 
-  //wall
+  // wall
   c.fillStyle = '#840';
   c.fillRect(x, y, 200, -100);
 
-  //door
+  // door
   c.fillStyle = 'red';
-  c.fillRect(x+120, y, 50, -80);
+  c.fillRect(x + 120, y, 50, -80);
   c.beginPath();
-  c.moveTo(x+120, y);
-  c.lineTo(x+120, y-80);
-  c.lineTo(x+170, y-80);
-  c.lineTo(x+170, y);
+  c.moveTo(x + 120, y);
+  c.lineTo(x + 120, y - 80);
+  c.lineTo(x + 170, y - 80);
+  c.lineTo(x + 170, y);
   c.stroke();
 
   // window
   c.fillStyle = '#444';
-  c.fillRect(x+30, y-30, 50, -50);
+  c.fillRect(x + 30, y - 30, 50, -50);
 
   c.beginPath();
-  c.rect(x+30, y-30, 50, -50);
-  c.moveTo(x+30, y-55);
-  c.lineTo(x+80, y-55);
-  c.moveTo(x+55, y-30);
-  c.lineTo(x+55, y-80);
+  c.rect(x + 30, y - 30, 50, -50);
+  c.moveTo(x + 30, y - 55);
+  c.lineTo(x + 80, y - 55);
+  c.moveTo(x + 55, y - 30);
+  c.lineTo(x + 55, y - 80);
   c.stroke();
 
   // roof
   c.fillStyle = '#444';
   c.beginPath();
-  c.moveTo(x-20, y-100);
-  c.lineTo(x+220, y-100);
-  c.lineTo(x+190, y-140);
-  c.lineTo(x+10, y-140);
+  c.moveTo(x - 20, y - 100);
+  c.lineTo(x + 220, y - 100);
+  c.lineTo(x + 190, y - 140);
+  c.lineTo(x + 10, y - 140);
   c.fill();
 }
 
 function treeTriangle(x, y, w, h) {
-  const gradient = c.createLinearGradient(x, y-h, x+w/2, y);
+  const gradient = c.createLinearGradient(x, y - h, x + w / 2, y);
   gradient.addColorStop(0, '#070');
   gradient.addColorStop(1, '#050');
   c.fillStyle = gradient;
 
   c.beginPath();
-  c.moveTo(x - w/2, y);
-  c.lineTo(x + w/2, y);
-  c.lineTo(x, y-h);
+  c.moveTo(x - w / 2, y);
+  c.lineTo(x + w / 2, y);
+  c.lineTo(x, y - h);
   c.fill();
 }
 
 function drawTree(x, y, h) {
-  const trunkW = h/10;
-  const crownW = h/2;
-  const crownY = y - h/6;
+  const trunkW = h / 10;
+  const crownW = h / 2;
+  const crownY = y - h / 6;
 
-  const step = h * 5/18;
+  const step = h * 5 / 18;
 
   // trunk
   c.fillStyle = '#420';
-  c.fillRect(x-trunkW/2, y, trunkW, -h/2);
+  c.fillRect(x - trunkW / 2, y, trunkW, -h / 2);
 
   // leaves (needles)
   treeTriangle(x, crownY, crownW, step * 2);
-  treeTriangle(x, crownY-step, crownW * 0.8, step * 1.8);
-  treeTriangle(x, crownY-step * 2, crownW * 0.6, step);
+  treeTriangle(x, crownY - step, crownW * 0.8, step * 1.8);
+  treeTriangle(x, crownY - step * 2, crownW * 0.6, step);
 }
 
 function drawLandscape() {
@@ -116,10 +115,10 @@ function prepareLogo() {
 }
 
 function drawFlake(flake) {
-  const {x, y, size} = flake;
-  c.fillStyle = "#fffb";
+  const { x, y, size } = flake;
+  c.fillStyle = '#fffb';
   c.beginPath();
-  c.ellipse(x, y, size/2, size/2, 0, 0, 7);
+  c.ellipse(x, y, size / 2, size / 2, 0, 0, 7);
   c.fill();
 }
 
@@ -135,18 +134,18 @@ function createNewFlake(yRange = 0) {
   const size = rnd() * MAX_FLAKE_SIZE + 1;
   const sy = rnd() * (MAX_SY - MIN_SY) + MIN_SY;
   const sx = (rnd() * 2 - 1) * MAX_SX;
-  return {x, y, size, sy, sx};
+  return { x, y, size, sy, sx };
 }
 
 function initSnow() {
-  for (let i=0; i<FLAKE_COUNT; i+=1) {
+  for (let i = 0; i < FLAKE_COUNT; i += 1) {
     const flake = createNewFlake(-canvasH);
     flakes.push(flake);
   }
 }
 
 function isTransparent(x, y) {
-  const pixelData = c.getImageData(x*scale, y*scale, 1, 1).data;
+  const pixelData = c.getImageData(x * scale, y * scale, 1, 1).data;
   return pixelData[3] < 250;
 }
 
@@ -160,7 +159,7 @@ function moveFlake(flake) {
     flake.y = nextY;
     return true;
   } else {
-    flake.sx *= (flake.sy-1) / flake.sy;
+    flake.sx *= (flake.sy - 1) / flake.sy;
     flake.sy -= 1;
     return moveFlake(flake);
   }
@@ -171,7 +170,7 @@ function isOutOfBounds(flake) {
 }
 
 function moveSnow() {
-  for (let i = 0; i < flakes.length; i+=1) {
+  for (let i = 0; i < flakes.length; i += 1) {
     const flake = flakes[i];
     const moved = moveFlake(flake);
     if (isOutOfBounds(flake)) {
