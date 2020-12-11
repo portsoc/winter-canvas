@@ -1,0 +1,24 @@
+<!doctype html>
+<title>Minimal winter-canvas example</title>
+<script src="../component/winter-canvas.js" type="module" defer async></script>
+
+<style>
+  body {
+    background: #444;
+    color: white;
+  }
+</style>
+
+<h1>Minimal winter-canvas example</h1>
+
+<winter-canvas width="800" height="400"></winter-canvas>
+
+<script>
+  window.addEventListener('load', () => {
+    const canvas = document.querySelector('winter-canvas');
+    const c = canvas.getContext('2d');
+    c.fillStyle = '#621360';
+    c.fillRect(100,300,600,100);
+    canvas.snowing = true;
+  });
+</script>
