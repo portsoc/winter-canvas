@@ -35,6 +35,7 @@ class WinterCanvas extends HTMLElement {
   }
 
   connectedCallback() {
+    if (!this.shadow) {
     this.shadow = this.attachShadow({ mode: 'closed' });
     this.canvas = document.createElement('canvas');
     this.c = this.canvas.getContext('2d');
@@ -42,6 +43,7 @@ class WinterCanvas extends HTMLElement {
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.shadow.append(this.canvas);
+  }
   }
 
   disconnectedCallback() {
