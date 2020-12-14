@@ -77,7 +77,7 @@ class WinterCanvas extends HTMLElement {
   }
 
   checkBoolAttr(name) {
-    return this.hasAttribute(name) && this.getAttribute(name) !== false;
+    return this.hasAttribute(name) && this.getAttribute(name) !== 'false';
   }
 
 
