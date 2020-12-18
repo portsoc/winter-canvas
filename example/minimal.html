@@ -11,14 +11,28 @@
 
 <h1>Minimal winter-canvas example</h1>
 
-<winter-canvas width="800" height="400"></winter-canvas>
+<winter-canvas width="800" height="350"></winter-canvas>
+<winter-canvas width="800" height="350"
+  flake-count=100
+  max-flake-size=50
+  max-sy=0.5
+  min-sy=0.01
+  max-sx=0.11>
+</winter-canvas>
 
 <script>
   window.addEventListener('load', () => {
-    const canvas = document.querySelector('winter-canvas');
-    const c = canvas.getContext('2d');
-    c.fillStyle = '#621360';
-    c.fillRect(100,300,600,100);
-    canvas.snowing = true;
-  });
+    const canvases = document.querySelectorAll('winter-canvas');
+
+    let i = 0;
+    for (const canvas of canvases) {
+      i+=100;
+      const c = canvas.getContext('2d');
+      c.fillStyle = '#621360';
+      c.fillRect(100 + i,300,600,100);
+      canvas.snowing=true;
+      canvas.MAX_SETTLED=i;
+    }
+
+});
 </script>
