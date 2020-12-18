@@ -82,9 +82,13 @@ class WinterCanvas extends HTMLElement {
 
 
   checkOptionAttr(name, htmlName, options) {
-    if (this.hasAttribute(htmlName)) options[name] = Number(this.getAttribute(htmlName));
+    if (this.hasAttribute(htmlName)) {
+      options[name] = Number(this.getAttribute(htmlName));
+    }
   }
 
+  // todo - improve this code so that the options are requested from
+  // the snow util module, provided as an array and looped over.
   getFlakeOptions() {
     const retval = {};
     this.checkOptionAttr('FLAKE_COUNT', 'flake-count', retval);
@@ -96,16 +100,24 @@ class WinterCanvas extends HTMLElement {
   }
 
   animate() {
-    if (this.flakes == null) this.flakes = snow.initSnow(this.c, this.getFlakeOptions());
-    if (this.savedPicture) snow.restoreCanvasPicture(this.c, this.savedPicture);
+    if (this.flakes == null) {
+      this.flakes = snow.initSnow(this.c, this.getFlakeOptions());
+    }
+    if (this.savedPicture) {
+      snow.restoreCanvasPicture(this.c, this.savedPicture);
+    }
     const settledFlakes = snow.moveSnow(this.c, this.flakes);
-    if (this.settledCount < this.MAX_SETTLED) snow.drawSnow(this.c, settledFlakes);
+    if (this.settledCount < this.MAX_SETTLED) {
+      snow.drawSnow(this.c, settledFlakes);
+    }
     this.settledCount += settledFlakes.length;
     this.savedPicture = snow.saveCanvasPicture(this.c);
 
     snow.drawSnow(this.c, this.flakes);
 
-    if (this.checkBoolAttr('snowing')) window.requestAnimationFrame(this.animate);
+    if (this.checkBoolAttr('snowing')) {
+      window.requestAnimationFrame(this.animate);
+    }
   }
 }
 
