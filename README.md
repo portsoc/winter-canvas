@@ -29,7 +29,7 @@ adds animated falling snow to the image.
 To use the component, import the `winter-canvas` library:
 
 ```html
-<script src="//portsoc.github.io/winter-canvas/component/winter-canvas.js" type="module"></script>
+<script src="component/winter-canvas.js" type="module"></script>
 ```
 
 Then include the `<winter-canvas>` element it in your page:
